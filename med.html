@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyMedTrack</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background-color: #4a90e2;
+      color: white;
+      width: 100%;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      margin: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #3b7dc1;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #eef3fa;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>MyMedTrack - Medication Reminder</header>
+  <div class="container">
+    <h2>Add New Medication</h2>
+    <input type="text" id="medName" placeholder="Medication Name" />
+    <input type="time" id="medTime" />
+    <button onclick="addMedication()">Add Medication</button>
+
+    <h3>Your Medications</h3>
+    <ul id="medList"></ul>
+  </div>
+
+  <script>
+    function loadMedications() {
+      const meds = JSON.parse(localStorage.getItem("medications")) || [];
+      const list = document.getElementById("medList");
+      list.innerHTML = "";
+      meds.forEach((med, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${med.name} at ${med.time}`;
+        list.appendChild(li);
+      });
+    }
+
+    function addMedication() {
+      const name = document.getElementById("medName").value.trim();
+      const time = document.getElementById("medTime").value;
+      if (!name || !time) return alert("Please enter both name and time");
+      const meds = JSON.parse(localStorage.getItem("medications")) || [];
+      meds.push({ name, time });
+      localStorage.setItem("medications", JSON.stringify(meds));
+      document.getElementById("medName").value = "";
+      document.getElementById("medTime").value = "";
+      loadMedications();
+    }
+
+    window.onload = loadMedications;
+  </script>
+</body>
+</html>
