@@ -1,9 +1,12 @@
 let medicines = JSON.parse(localStorage.getItem("medicines")) || [];
 
-function renderMedicines() {
+function saveMedicines() {
+  localStorage.setItem("medicines", JSON.stringify(medicines));
+}
+
+function renderList() {
   const list = document.getElementById("medicineList");
   list.innerHTML = "";
-
   medicines.forEach((med, index) => {
     const li = document.createElement("li");
 
@@ -12,54 +15,50 @@ function renderMedicines() {
     input.value = med;
     input.disabled = true;
 
-    const actions = document.createElement("div");
-    actions.className = "action-btns";
+    const btns = document.createElement("div");
+    btns.className = "action-buttons";
 
     const editBtn = document.createElement("button");
-    editBtn.innerText = "Edit";
+    editBtn.textContent = "Edit";
     editBtn.onclick = () => {
       if (input.disabled) {
         input.disabled = false;
+        editBtn.textContent = "Save";
         input.focus();
-        editBtn.innerText = "Save";
       } else {
-        medicines[index] = input.value.trim();
-        saveToStorage();
-        renderMedicines();
+        input.disabled = true;
+        medicines[index] = input.value;
+        saveMedicines();
+        renderList();
       }
     };
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.innerText = "Delete";
+    deleteBtn.textContent = "Delete";
     deleteBtn.onclick = () => {
       medicines.splice(index, 1);
-      saveToStorage();
-      renderMedicines();
+      saveMedicines();
+      renderList();
     };
 
-    actions.appendChild(editBtn);
-    actions.appendChild(deleteBtn);
+    btns.appendChild(editBtn);
+    btns.appendChild(deleteBtn);
 
     li.appendChild(input);
-    li.appendChild(actions);
-
+    li.appendChild(btns);
     list.appendChild(li);
   });
 }
 
 function addMedicine() {
   const input = document.getElementById("medicineInput");
-  const name = input.value.trim();
-  if (name) {
-    medicines.push(name);
-    saveToStorage();
+  const value = input.value.trim();
+  if (value !== "") {
+    medicines.push(value);
     input.value = "";
-    renderMedicines();
+    saveMedicines();
+    renderList();
   }
 }
 
-function saveToStorage() {
-  localStorage.setItem("medicines", JSON.stringify(medicines));
-}
-
-renderMedicines();
+renderList();
