@@ -10,10 +10,15 @@ function renderList() {
   medicines.forEach((med, index) => {
     const li = document.createElement("li");
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = med;
-    input.disabled = true;
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.value = med.name;
+    nameInput.disabled = true;
+
+    const timeInput = document.createElement("input");
+    timeInput.type = "time";
+    timeInput.value = med.time;
+    timeInput.disabled = true;
 
     const btns = document.createElement("div");
     btns.className = "action-buttons";
@@ -21,15 +26,20 @@ function renderList() {
     const editBtn = document.createElement("button");
     editBtn.textContent = "Edit";
     editBtn.onclick = () => {
-      if (input.disabled) {
-        input.disabled = false;
-        editBtn.textContent = "Save";
-        input.focus();
-      } else {
-        input.disabled = true;
-        medicines[index] = input.value;
+      const editing = !nameInput.disabled;
+      if (editing) {
+        medicines[index].name = nameInput.value;
+        medicines[index].time = timeInput.value;
+        nameInput.disabled = true;
+        timeInput.disabled = true;
+        editBtn.textContent = "Edit";
         saveMedicines();
         renderList();
+      } else {
+        nameInput.disabled = false;
+        timeInput.disabled = false;
+        nameInput.focus();
+        editBtn.textContent = "Save";
       }
     };
 
@@ -44,18 +54,21 @@ function renderList() {
     btns.appendChild(editBtn);
     btns.appendChild(deleteBtn);
 
-    li.appendChild(input);
+    li.appendChild(nameInput);
+    li.appendChild(timeInput);
     li.appendChild(btns);
     list.appendChild(li);
   });
 }
 
 function addMedicine() {
-  const input = document.getElementById("medicineInput");
-  const value = input.value.trim();
-  if (value !== "") {
-    medicines.push(value);
-    input.value = "";
+  const name = document.getElementById("medicineInput").value.trim();
+  const time = document.getElementById("timeInput").value;
+
+  if (name !== "" && time !== "") {
+    medicines.push({ name, time });
+    document.getElementById("medicineInput").value = "";
+    document.getElementById("timeInput").value = "";
     saveMedicines();
     renderList();
   }
